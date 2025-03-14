@@ -1,0 +1,163 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ "development" ]
+
+env:
+  AWS_REGION: ${{ vars.MY_AWS_REGION }}
+  ECR_REPOSITORY: ${{ vars.MY_ECR_REPOSITORY }}
+  ECS_SERVICE: ${{ vars.MY_ECS_SERVICE }}
+  ECS_CLUSTER: ${{ vars.MY_ECS_CLUSTER }}
+  ECS_TASK_DEFINITION: ${{ vars.MY_ECS_TASK_DEFINITION }}
+  CONTAINER_NAME: ${{ vars.MY_CONTAINER_NAME }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: github
+          settings-path: ${{ github.workspace }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build/libs/*.jar
+
+  migrate:
+    name: database migration
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Flyway Scripts
+        uses: red-gate/FlywayGitHubAction@main
+        with:
+          url: ${{ vars.MYSQL_URL }}
+          user: ${{ secrets.MYSQL_USER }}
+          password: ${{ secrets.MYSQL_PASSWORD }}
+          locations: filesystem:./src/main/resources/db-migration
+          extraArgs: -outOfOrder=true
+
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [build, migrate]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract artifacts
+        run: |
+          mkdir -p build/libs
+          mv *.jar build/libs/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Get the image tag
+        id: get_image_tag
+        run: |
+            IMAGE_TAG=$(aws ecr describe-images --repository-name $ECR_REPOSITORY --query 'sort_by(imageDetails,&imagePushedAt)[-1].imageTags[0]' --output text)
+            
+            if [ "$IMAGE_TAG" == "None" ] || [ -z "$IMAGE_TAG" ]; then
+              IMAGE_TAG="1.0.0"
+            else
+              MAJOR=$(echo $IMAGE_TAG | cut -d '.' -f 1)
+              MINOR=$(echo $IMAGE_TAG | cut -d '.' -f 2)
+              PATCH=$(echo $IMAGE_TAG | cut -d '.' -f 3)
+
+              PATCH=$((PATCH + 1))
+            
+              IMAGE_TAG="${MAJOR}.${MINOR}.${PATCH}"
+            fi
+            echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Verify ECR push
+        run: |
+          aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG
+
+      - name: Update Task Definition
+        run: |
+          jq --arg MYSQL_PASSWORD "${{ secrets.MYSQL_PASSWORD }}" \
+             --arg MYSQL_USER "${{ secrets.MYSQL_USER }}" \
+             --arg IMAGE "${{ env.image }}" \
+            '(.containerDefinitions[0].environment[] | select(.name == "MYSQL_PASSWORD")).value = $MYSQL_PASSWORD |
+             (.containerDefinitions[0].environment[] | select(.name == "MYSQL_USER")).value = $MYSQL_USER |
+             .containerDefinitions[0].image = $IMAGE' \
+             ${{ env.ECS_TASK_DEFINITION }} > task-def-updated.json
+
+      - name: Print Updated Task Definition
+        run: |
+          cat task-def-updated.json
+
+      - name: Register New Task Definition
+        run: |
+          aws ecs register-task-definition --cli-input-json file://task-def-updated.json
+
+      - name: Deploy ECS Service with new task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: task-def-updated.json
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
