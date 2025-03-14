@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS work_experience_table (
     end_date DATE,
     location VARCHAR(255),
     location_type VARCHAR(10),
-    currently_working_flag TINYINT(1) NOT NULL DEFAULT 1
+    currently_working_flag TINYINT NOT NULL DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS work_experience_skill_table (
