@@ -1,0 +1,9 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "productId": "#productId#",
+    "productName": "Sample Product",
+    "productDesc": null,
+    "price": 0
+  }
+}

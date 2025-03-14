@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  portfolio-management-service:
+    init: true
+    build:
+      dockerfile: ./Dockerfile
+    image: portfolio-management-service:latest
+    env_file:
+      - ./env/docker.env
+    working_dir: /app
+    container_name: portfolio-management-service
+    depends_on:
+      - portfolio-management-service-flyway
+    ports:
+      - '8080:8080'
+    restart: on-failure
+
+  portfolio-management-service-mysql:
+    init: true
+    image: mysql:8.0.26
+    container_name: portfolio-management-service-mysql
+    env_file:
+      - ./env/docker.env
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  portfolio-management-service-flyway:
+    init: true
+    image: flyway/flyway
+    container_name: portfolio-management-service-flyway
+    command: -url='jdbc:mysql://portfolio-management-service-mysql/portfolio_management_service_db?allowPublicKeyRetrieval=true&useSSL=false' -schemas=portfolio_management_service_db  -user=admin -password=PortfolioApp1234 -connectRetries=60 repair migrate
+    volumes:
+      - ./src/main/resources/db-migration:/flyway/sql
+    depends_on:
+      - portfolio-management-service-mysql
+    restart: on-failure
+
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  default:
+    name: portfolio-management-service

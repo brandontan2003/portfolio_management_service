@@ -1,0 +1,10 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "productId": "#productId#",
+    "productName": "Sample Product",
+    "productDesc": "Sample Product Description",
+    "price": 99.99,
+    "scheduledDeletionDate": "#scheduledDeletionDate#"
+  }
+}
