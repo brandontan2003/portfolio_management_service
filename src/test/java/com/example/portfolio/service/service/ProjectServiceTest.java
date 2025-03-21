@@ -1,9 +1,9 @@
 package com.example.portfolio.service.service;
 
-import com.example.portfolio.service.dto.RetrieveEducationResponse;
 import com.example.portfolio.service.dto.RetrieveProjectResponse;
 import com.example.portfolio.service.dto.RetrieveProjectsResponse;
-import com.example.portfolio.service.model.*;
+import com.example.portfolio.service.model.Project;
+import com.example.portfolio.service.model.ProjectSourceCode;
 import com.example.portfolio.service.repository.ProjectRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
