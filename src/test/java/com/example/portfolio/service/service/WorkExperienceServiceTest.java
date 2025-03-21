@@ -2,6 +2,7 @@ package com.example.portfolio.service.service;
 
 import com.example.portfolio.service.dto.RetrieveWorkExperienceResponse;
 import com.example.portfolio.service.dto.RetrieveWorkExperiencesResponse;
+import com.example.portfolio.service.enums.LocationTypeEnum;
 import com.example.portfolio.service.model.WorkExperience;
 import com.example.portfolio.service.model.WorkExperienceDescription;
 import com.example.portfolio.service.model.WorkExperienceSkill;
@@ -91,8 +92,8 @@ public class WorkExperienceServiceTest {
                         getExpectedWorkExpResponse(null, null, null, Collections.emptyList(), Collections.emptyList())
                 ),
                 Arguments.of("Test Retrieve Work Experiences where all the fields have values",
-                        getWorkExperience(LocalDate.now(), "11", "Remote", List.of(getDescription()), List.of(getSkills())),
-                        getExpectedWorkExpResponse(LocalDate.now(), "11", "Remote", List.of(DESCRIPTION), List.of(SKILL))
+                        getWorkExperience(LocalDate.now(), "11", LocationTypeEnum.REMOTE.getValue(), List.of(getDescription()), List.of(getSkills())),
+                        getExpectedWorkExpResponse(LocalDate.now(), "11", LocationTypeEnum.REMOTE.getValue(), List.of(DESCRIPTION), List.of(SKILL))
                 )
         );
     }
