@@ -19,7 +19,7 @@ public class EducationController {
     private EducationService educationService;
 
     @GetMapping(API_VERSION_1 + RETRIEVE_URL)
-    public ResponsePayload<RetrieveEducationsResponse> retrieveWorkExperiences() {
+    public ResponsePayload<RetrieveEducationsResponse> retrieveEducations() {
         return ResponsePayload.<RetrieveEducationsResponse>builder().status(STATUS_SUCCESS)
                 .result(educationService.retrieveEducations()).build();
     }
