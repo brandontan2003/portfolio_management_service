@@ -1,0 +1,35 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "projects": [
+      {
+        "projectId": "#projectId1#",
+        "projectName": "Project Name",
+        "description": "Some description",
+        "technologiesUsed": "Technologies Used",
+        "status": "COMPLETED",
+        "githubLinks": [
+          "Github Links"
+        ]
+      },
+      {
+        "projectId": "#projectId2#",
+        "projectName": "Project Name",
+        "description": null,
+        "technologiesUsed": "Technologies Used",
+        "status": "COMPLETED",
+        "githubLinks": [
+          "Github Links"
+        ]
+      },
+      {
+        "projectId": "#projectId3#",
+        "projectName": "Project Name",
+        "description": "Some description",
+        "technologiesUsed": "Technologies Used",
+        "status": "COMPLETED",
+        "githubLinks": []
+      }
+    ]
+  }
+}

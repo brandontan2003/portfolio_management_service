@@ -1,0 +1,23 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "educations": [
+      {
+        "educationId": "#educationId#",
+        "school": "School",
+        "degree": "Degree",
+        "fieldOfStudies": "Field of Studies",
+        "startDate": "19/04/2020",
+        "endDate": "20/03/2023",
+        "grade": "3.96",
+        "activitiesAndSocieties": "Some activities",
+        "skills": [
+          "Some skill"
+        ],
+        "descriptions": [
+          "Some description"
+        ]
+      }
+    ]
+  }
+}

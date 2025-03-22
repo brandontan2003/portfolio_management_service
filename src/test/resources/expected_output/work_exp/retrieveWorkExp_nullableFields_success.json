@@ -1,0 +1,19 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "workExperiences": [
+      {
+        "workExperienceId": "#workExperienceId#",
+        "jobTitle": "Job Title",
+        "company": "Company",
+        "startDate": "19/04/2020",
+        "endDate": null,
+        "location": null,
+        "locationType": null,
+        "currentlyWorkingFlag": false,
+        "skills": [],
+        "descriptions": []
+      }
+    ]
+  }
+}

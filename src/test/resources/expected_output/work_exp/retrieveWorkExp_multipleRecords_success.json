@@ -1,0 +1,35 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "workExperiences": [
+      {
+        "workExperienceId": "#workExperienceId1#",
+        "jobTitle": "Job Title",
+        "company": "Company",
+        "startDate": "19/04/2020",
+        "endDate": "20/03/2023",
+        "location": null,
+        "locationType": null,
+        "currentlyWorkingFlag": false,
+        "skills": [
+          "Some skill"
+        ],
+        "descriptions": []
+      },
+      {
+        "workExperienceId": "#workExperienceId2#",
+        "jobTitle": "Job Title",
+        "company": "Company",
+        "startDate": "19/04/2020",
+        "endDate": null,
+        "location": "Singapore",
+        "locationType": "HYBRID",
+        "currentlyWorkingFlag": false,
+        "skills": [],
+        "descriptions": [
+          "Some description"
+        ]
+      }
+    ]
+  }
+}

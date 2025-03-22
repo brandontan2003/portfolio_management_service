@@ -1,0 +1,8 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "homepageContentId": "#homepageContentId#",
+    "homepageSection": "Section",
+    "homepageValue": "Some value"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "projects": [
+      {
+        "projectId": "#projectId#",
+        "projectName": "Project Name",
+        "description": null,
+        "technologiesUsed": "Technologies Used",
+        "status": "COMPLETED",
+        "githubLinks": [
+          "Github Links"
+        ]
+      }
+    ]
+  }
+}

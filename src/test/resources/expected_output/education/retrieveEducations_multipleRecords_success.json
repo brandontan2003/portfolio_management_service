@@ -1,0 +1,35 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "educations": [
+      {
+        "educationId": "#educationId1#",
+        "school": "School",
+        "degree": "Degree",
+        "fieldOfStudies": "Field of Studies",
+        "startDate": "19/04/2020",
+        "endDate": "20/03/2023",
+        "grade": null,
+        "activitiesAndSocieties": null,
+        "skills": [
+          "Some skill"
+        ],
+        "descriptions": []
+      },
+      {
+        "educationId": "#educationId2#",
+        "school": "School",
+        "degree": "Degree",
+        "fieldOfStudies": "Field of Studies",
+        "startDate": "19/04/2020",
+        "endDate": null,
+        "grade": "3.96",
+        "activitiesAndSocieties": "Some activities",
+        "skills": [],
+        "descriptions": [
+          "Some description"
+        ]
+      }
+    ]
+  }
+}

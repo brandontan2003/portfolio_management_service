@@ -1,0 +1,9 @@
+{
+  "status": "ERROR",
+  "result": {
+    "error": {
+      "errorCode": "HOMEPAGE_SECTION_NOT_FOUND",
+      "errorMessage": "No value found"
+    }
+  }
+}

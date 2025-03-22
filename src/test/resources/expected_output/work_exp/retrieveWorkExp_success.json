@@ -1,0 +1,23 @@
+{
+  "status": "SUCCESS",
+  "result": {
+    "workExperiences": [
+      {
+        "workExperienceId": "#workExperienceId#",
+        "jobTitle": "Job Title",
+        "company": "Company",
+        "startDate": "19/04/2020",
+        "endDate": "20/03/2023",
+        "location": "Singapore",
+        "locationType": "REMOTE",
+        "currentlyWorkingFlag": false,
+        "skills": [
+          "Some skill"
+        ],
+        "descriptions": [
+          "Some description"
+        ]
+      }
+    ]
+  }
+}
